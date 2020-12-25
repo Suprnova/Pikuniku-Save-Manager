@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Pikuniku_Save_Manager"
         mc:Ignorable="d"
-        Title="Pikuniku Save Manager" Height="220" Width="600">
+        Title="Pikuniku Save Manager" Height="220" Width="600" ResizeMode="NoResize">
     <Grid>
         <ComboBox x:Name="save" Margin="105,30,274,123"/>
         <Label Content="Save Selection:&#xD;&#xA;" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top"/>
