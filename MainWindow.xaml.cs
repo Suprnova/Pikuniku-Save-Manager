@@ -186,9 +186,7 @@ namespace Pikuniku_Save_Manager
                 {
                     continue;
                 }
-                //this blocks UI updates which is cringe but idk what else to use
-                do { } while (wc.IsBusy == true);
-                wc.DownloadFileAsync(new Uri(save.Download_URL), Path.Combine(Globals.docPath, "Saves", save.Name));
+                wc.DownloadFile(new Uri(save.Download_URL), Path.Combine(Globals.docPath, "Saves", save.Name));
             }
             MessageBox.Show($"Download has completed. Saves have been saved to {Path.Combine(Globals.docPath, "Saves")}.", "Notice");
             FetchSaves();
