@@ -43,8 +43,5 @@
         <Label Content="Resolution:" HorizontalAlignment="Left" Margin="31,85,0,0" VerticalAlignment="Top" Width="68"/>
         <CheckBox x:Name="fs" Content="Fullscreen" HorizontalAlignment="Left" Margin="369,91,0,0" VerticalAlignment="Top"/>
         <Button x:Name="start" Content="Save" HorizontalAlignment="Center" Margin="0,141,0,0" VerticalAlignment="Top" Width="169" Height="31" Click="Start_Click"/>
-        <ProgressBar x:Name="progTotal" HorizontalAlignment="Left" Height="28" Margin="369,30,0,0" VerticalAlignment="Top" Width="170" Visibility="Hidden"/>
-        <ProgressBar x:Name="prog" HorizontalAlignment="Left" Height="28" Margin="369,58,0,0" VerticalAlignment="Top" Width="170" Visibility="Hidden"/>
-
     </Grid>
 </Window>

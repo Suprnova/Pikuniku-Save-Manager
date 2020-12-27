@@ -3,18 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net;
+using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 
-using CG.Web.MegaApiClient;
+using Newtonsoft.Json.Linq;
 using Ookii.Dialogs.Wpf;
 
 namespace Pikuniku_Save_Manager
@@ -31,6 +24,13 @@ namespace Pikuniku_Save_Manager
             public static bool fullscreen;
         }
 
+        public class Save
+        {
+            public string Name { get; set; }
+
+            public string Download_URL { get; set; }
+        }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -38,6 +38,11 @@ namespace Pikuniku_Save_Manager
             Directory.CreateDirectory(Path.Combine(Globals.docPath, "Saves"));
             FetchSaves();
             ReadSettings();
+            if (save.SelectedIndex == -1)
+            {
+                try { save.SelectedIndex = 0; }
+                catch { };
+            }
         }
 
         private void FetchSaves()
@@ -47,6 +52,8 @@ namespace Pikuniku_Save_Manager
             {
                 save.Items.Add(Path.GetFileNameWithoutExtension(saveFile));
             }
+            try { save.SelectedIndex = 0; }
+            catch { };
         }
 
         private void ReadSettings()
@@ -161,27 +168,29 @@ namespace Pikuniku_Save_Manager
         private async void Download_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Downloading saves. This may take a while.", "Notice");
-            prog.Visibility = Visibility.Visible;
-            progTotal.Visibility = Visibility.Visible;
             foreach (string file in Directory.GetFiles(Path.Combine(Globals.docPath, "Saves")))
             {
                 File.Delete(file);
             }
-            var client = new MegaApiClient();
-            client.LoginAnonymous();
-            Uri folderLink = new Uri("https://mega.nz/folder/TbowXKpJ#YoyVft8gTkmtzRvstBtF3w");
-            IEnumerable<INode> nodes = client.GetNodesFromLink(folderLink);
-            foreach (INode node in nodes.Where(x => x.Type == NodeType.File))
+            save.Items.Clear();
+            using WebClient wc = new WebClient();
+            wc.UseDefaultCredentials = true;
+            wc.Headers.Add("user-agent", "Pikuniku Save Manager");
+            var json = wc.DownloadString("https://api.github.com/repos/Suprnova123/Pikuniku-Save-Manager/contents/?ref=saves");
+            JArray saves = JArray.Parse(json);
+            IList<JToken> savesList = saves.Children().ToList();
+            foreach (JToken file in savesList)
             {
-                IProgress<double> progressHandler = new Progress<double>(x => prog.Value = x);
-                Console.WriteLine($"Downloading {node.Name}");
-                await client.DownloadFileAsync(node, Path.Combine(Globals.docPath, "Saves", node.Name), progressHandler);
-                progTotal.Value = progTotal.Value + (100 / nodes.Where(x => x.Type == NodeType.File).Count());
+                Save save = file.ToObject<Save>();
+                if (save.Name == "README.md")
+                {
+                    continue;
+                }
+                //this blocks UI updates which is cringe but idk what else to use
+                do { } while (wc.IsBusy == true);
+                wc.DownloadFileAsync(new Uri(save.Download_URL), Path.Combine(Globals.docPath, "Saves", save.Name));
             }
             MessageBox.Show($"Download has completed. Saves have been saved to {Path.Combine(Globals.docPath, "Saves")}.", "Notice");
-            client.Logout();
-            prog.Visibility = Visibility.Hidden;
-            progTotal.Visibility = Visibility.Hidden;
             FetchSaves();
         }
 
