@@ -115,8 +115,22 @@ namespace Pikuniku_Save_Manager
                     }
                     i++;
                 }
+                else if (line.StartsWith("Default language: "))
+                {
+                    try
+                    {
+                        language.SelectedIndex = Int32.Parse(line.Split(':')[1].Trim());
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Your settings file is corrupt. I will create a new one.", "Error");
+                        CreateSettings();
+                        return;
+                    }
+                    i++;
+                }
             }
-            if (i != 3)
+            if (i != 4)
             {
                 MessageBox.Show("Your settings file is corrupt. I will create a new one.", "Error");
                 CreateSettings();
@@ -125,12 +139,12 @@ namespace Pikuniku_Save_Manager
 
         private void CreateSettings()
         {
-            File.WriteAllText(Path.Combine(Globals.docPath, "settings.ini"), "// Saved settings for the Pikuniku Save Editor. Don't edit this file. Or do. I don't really care. \nDefault resolution: 1920 x 1080 \nDefault fullscreen: true \nDefault save: ");
+            File.WriteAllText(Path.Combine(Globals.docPath, "settings.ini"), "// Saved settings for the Pikuniku Save Editor. Don't edit this file. Or do. I don't really care. \nDefault resolution: 1920 x 1080 \nDefault fullscreen: true \nDefault save: \nDefault language: ");
             res.SelectedIndex = 1;
             fs.IsChecked = true;
         }
 
-        private void ChangeSettings(string res, string fullscreen, string save)
+        private void ChangeSettings(string res, string fullscreen, string save, string lang)
         {
             var settings = File.ReadAllLines(Path.Combine(Globals.docPath, "settings.ini"));
             int i = 0;
@@ -147,6 +161,10 @@ namespace Pikuniku_Save_Manager
                 else if (line.StartsWith("Default save: "))
                 {
                     settings[i] = $"Default save: {save}";
+                }
+                else if (line.StartsWith("Default language: "))
+                {
+                    settings[i] = $"Default language: {lang}";
                 }
                 i++;
             }
@@ -203,7 +221,7 @@ namespace Pikuniku_Save_Manager
             {
                 directory = (Path.Combine(Globals.docPath, "Saves", save.Text + ".reg"));
             }
-            ChangeSettings(res.Text, fs.IsChecked.ToString(), save.Text);
+            ChangeSettings(res.Text, fs.IsChecked.ToString(), save.Text, language.SelectedIndex.ToString());
             var regFile = File.ReadAllLines(Path.Combine(Globals.docPath, "Saves", directory));
             int i = 0;
             foreach (string line in regFile)
@@ -219,6 +237,10 @@ namespace Pikuniku_Save_Manager
                 else if (line.StartsWith("\"Screenmanager Is Fullscreen mode"))
                 {
                     regFile[i] = $"\"Screenmanager Is Fullscreen mode_h3981298716\"=dword:0000000{((bool)fs.IsChecked ? 1 : 0)}";
+                }
+                else if (line.StartsWith("\"PlayerLanguage"))
+                {
+                    regFile[i] = line.Split(':')[0] + $":0000000{language.SelectedIndex}";
                     break;
                 }
                 i++;
@@ -228,6 +250,16 @@ namespace Pikuniku_Save_Manager
             Process regeditProcess = Process.Start("regedit.exe", "/s \"" + directory + "\"");
             regeditProcess.WaitForExit();
             MessageBox.Show("Save has been successfully edited!");
+        }
+
+        private void export_Click(object sender, RoutedEventArgs e)
+        {
+            Process proc = new Process();
+            proc.StartInfo.FileName = "regedit.exe";
+            proc.StartInfo.UseShellExecute = false;
+            proc = Process.Start("regedit.exe", "/e \"" + Path.Combine(Globals.docPath, "Saves", DateTime.Now.Ticks.ToString()) + ".reg\" \"HKEY_CURRENT_USER\\Software\\Sectordub\\Pikuniku\"");
+            proc.WaitForExit();
+            MessageBox.Show($"Save has been exported successfully to {Path.Combine(Globals.docPath, "Saves", DateTime.Now.Ticks.ToString()) + ".reg"}.");
         }
     }
 }
