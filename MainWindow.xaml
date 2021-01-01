@@ -55,6 +55,7 @@
             </ComboBox.RenderTransform>
             <ComboBoxItem Content="English"/>
             <ComboBoxItem Content="French"/>
+            <ComboBoxItem Content="Spanish"/>
             <ComboBoxItem Content="Japanese"/>
             <ComboBoxItem Content="Italian"/>
             <ComboBoxItem Content="German"/>
