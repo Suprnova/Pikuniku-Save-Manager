@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Pikuniku_Save_Manager"
         mc:Ignorable="d"
-        Title="Pikuniku Save Manager" Height="220" Width="600" ResizeMode="CanResize">
+        Title="Pikuniku Save Manager" Height="220" Width="600" ResizeMode="NoResize">
     <Grid>
-        <ComboBox x:Name="save" Margin="120,30,255,123"/>
+        <ComboBox x:Name="save" Margin="120,30,255,123" VerticalContentAlignment="Center"/>
         <Label Content="Save Selection:&#xD;&#xA;" HorizontalAlignment="Left" Margin="30,32,0,0" VerticalAlignment="Top"/>
         <Button Content="..." HorizontalAlignment="Left" Margin="330,30,0,0" VerticalAlignment="Top" Height="30" Width="30" Click="Button_Click"/>
         <Button x:Name="download" Content="Download Saves" HorizontalAlignment="Left" Margin="390,30,0,0" VerticalAlignment="Top" Height="30" Width="150" Click="Download_Click"/>
-        <ComboBox x:Name="res" Margin="120,80,255,73">
+        <ComboBox x:Name="res" Margin="120,80,255,73" VerticalContentAlignment="Center">
             <ComboBox.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleY="1"/>
@@ -44,7 +44,7 @@
         <CheckBox x:Name="fs" Content="Fullscreen" HorizontalAlignment="Center" Margin="424,147,0,0" VerticalAlignment="Top"/>
         <Button x:Name="start" Content="Save" HorizontalAlignment="Center" Margin="160,140,0,0" VerticalAlignment="Top" Width="150" Height="30" Click="Start_Click"/>
         <Button x:Name="export" Content="Export Current Save" HorizontalAlignment="Center" Margin="-160,140,0,0" VerticalAlignment="Top" Width="150" Height="30" Click="export_Click"/>
-        <ComboBox x:Name="language" Margin="450,80,45,73">
+        <ComboBox x:Name="language" Margin="450,80,45,73" VerticalContentAlignment="Center">
             <ComboBox.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleY="1"/>
